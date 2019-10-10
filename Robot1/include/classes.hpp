@@ -1,3 +1,4 @@
+
 #ifndef _CLASSES_HPP_
 #define _CLASSES_HPP_
 
@@ -14,6 +15,8 @@ public:
 
     void resetEncoder();
     int direction;
+
+//private:
 };
 
 class Lift {
@@ -28,6 +31,8 @@ public:
 
   int liftTarget;
   int anglerTarget;
+
+  //void moveOutTake();
 
   void setIntakePower(int power);
 
@@ -65,5 +70,10 @@ private:
   float anglerKd;
   float anglerKi;
   int anglerPower;
+
+
+  int moveOutTimeCap;
+  int moveOutTime;
+  bool moveOutS;
 };
 #endif

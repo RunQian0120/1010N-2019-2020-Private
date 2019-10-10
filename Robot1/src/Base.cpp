@@ -119,6 +119,8 @@ void Base::pidTurn(int target, int timeout, float kp, float kd, int speedCap){
       L2.move(0);
 }
 
+
+
 int expDrive (int joyVal, float driveExp, int joyDead, int motorMin) {
     int joySign;
     int joyMax = 127 - joyDead;
@@ -141,4 +143,27 @@ void Base::drive() {
   setLeftPower(Y1+X1);
   setRightPower(Y1-X1);
 
+
+  /*
+  if(second.get_digital(E_CONTROLLER_DIGITAL_A)) {
+    moveOutS = 1;
+  } else if(second.get_digital(E_CONTROLLER_DIGITAL_B)) {
+    //moveOutS = 0;
+    moveOutTime = 0;
+  }
+  //lcd::initialize();
+  lcd::print(0,"MoveOutTime: %d", moveOutTime);
+  lcd::print(1,"MoveOutS: %d", moveOutS);
+  if(moveOutS == 1) {
+    setLeftPower(63);
+    setRightPower(63);
+    //lift.setIntakePower(-63);
+    moveOutTime += 1;
+  }
+
+
+  if(moveOutTime >= moveOutTimeCap) {
+    moveOutS = 0;
+    moveOutTime = 0;
+  }*/
 }
