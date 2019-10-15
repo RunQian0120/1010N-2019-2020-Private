@@ -15,7 +15,7 @@ Lift::Lift() {
 
   //LIFT PID CONSTANTS
   liftKp = 0.5;
-  liftKd = 0;
+  liftKd = 0.3;
   liftKi = 0;
   liftPower = 0;
 
@@ -33,9 +33,12 @@ Lift::Lift() {
 
   //LIFT PID CONSTANTS
   anglerKp = .85;
-  anglerKd = 0.0;
+  anglerKd = 0.3;
   anglerKi = 0.0;
   anglerPower = 0;
+
+  placeS = 0;
+  placeTimer = 0;
 
 }
 
@@ -44,7 +47,7 @@ void Lift::setIntakePower(int power) {
   Roller2 = power;
 }
 
-void Lift::liftPID() {
+void Lift::liftPID(int speedCap) {
   //LIFT
   liftCurr = Lift1.get_position();
   liftError = liftTarget - liftCurr;
@@ -56,11 +59,11 @@ void Lift::liftPID() {
 
   liftPower = (liftP + liftD);
 
-  if(liftPower > 127){
-    liftPower = 127;
+  if(liftPower > speedCap){
+    liftPower = speedCap;
   }
-  if(liftPower < -127){
-    liftPower = -127;
+  if(liftPower < -speedCap){
+    liftPower = -speedCap;
   }
 
   if(second.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) < 10 && second.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) > -10) {
@@ -79,12 +82,12 @@ void Lift::liftPID() {
     }
     */
   } else {
-    Lift1.move(second.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
+    Lift1.move(-second.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
     liftTarget = Lift1.get_position();
   }
 }
 
-void Lift::anglerPID() {
+void Lift::anglerPID(int speedCap) {
   anglerCurr = TrayAngler.get_position();
   anglerError = anglerTarget - anglerCurr;
   anglerErrorDiff = anglerError - anglerErrorLast;
@@ -95,11 +98,11 @@ void Lift::anglerPID() {
 
   anglerPower = anglerP + anglerD;
 
-  if(anglerPower > 127){
-   anglerPower = 127;
+  if(anglerPower > speedCap){
+   anglerPower = speedCap;
   }
-  if(anglerPower < -127){
-   anglerPower = -127;
+  if(anglerPower < -speedCap){
+   anglerPower = -speedCap;
   }
 
   //TrayAngler.move(anglerPower);
@@ -182,9 +185,41 @@ void Lift:: moveOutTake () {
 
 }*/
 
+
+void Lift::autoPlace() {
+    Lift1.move_absolute(20, 127);
+    pros::delay(100);
+    TrayAngler.move_absolute(30, 127);
+    pros::delay(5);
+    TrayAngler.move_absolute(70, 63);
+}
+
+void Lift::driverPlace() {
+  if(second.get_digital(E_CONTROLLER_DIGITAL_A) && placeS == -1) {
+    placeS = 0;
+    placeTimer = pros::millis();
+    anglerTarget = 500;
+  }
+
+  if(pros::millis() - placeTimer >= 700) {
+    placeS = 1;
+  } else if(pros::millis() -placeTimer >= 1000) {
+    placeS = -1;
+    placeTimer = 0;
+  }
+}
+
 void Lift::drive() {
-  liftPID();
-  anglerPID();
+
+  liftPID(127);
+
+  if(placeS == 0 || placeS == -1) {
+    anglerPID(127);
+  } else if(placeS == 1) {
+    anglerPID(63);
+  }
+
+  driverPlace();
 
   //moveOutTake();
 
@@ -195,4 +230,7 @@ void Lift::drive() {
   } else {
     setIntakePower(0);
   }
+
+
+
 }

@@ -21,7 +21,7 @@ void Base::setRightPower(int power) {
   R2 = power;
 }
 
-void Base::pidDrive(int target, int timeout, float kp, float kd, float skew, int speedCap) {
+void Base::pidDrive(int target, int timeout, float kp, float kd, int speedCap) {
     R.tare_position();
     L.tare_position();
 
@@ -57,8 +57,8 @@ void Base::pidDrive(int target, int timeout, float kp, float kd, float skew, int
        }
 
 
-       int rightPower = motorPower - (skew*encoderError);
-       int leftPower = motorPower + (skew*encoderError);
+       int rightPower = motorPower - encoderError;
+       int leftPower = motorPower + encoderError;
 
        R.move(rightPower);
        R2.move(rightPower);

@@ -10,7 +10,7 @@ public:
     void setRightPower(int power);
     void setLeftPower(int power);
 
-    void pidDrive(int target, int timeout, float kp, float kd, float skew, int speedCap);
+    void pidDrive(int target, int timeout, float kp, float kd, int speedCap);
     void pidTurn(int target, int timeout, float kp, float kd, int speedCap);
 
     void resetEncoder();
@@ -26,8 +26,8 @@ public:
   //Drive function
   void drive();
   //PID LIFT + ANGLER
-  void liftPID();
-  void anglerPID();
+  void liftPID(int speedCap);
+  void anglerPID(int speedCap);
 
   int liftTarget;
   int anglerTarget;
@@ -36,6 +36,9 @@ public:
 
   void setIntakePower(int power);
 
+  void autoPlace();
+
+  void driverPlace();
 private:
   //LIFT PID ERRORS
   int liftErrorLast;
@@ -72,8 +75,8 @@ private:
   int anglerPower;
 
 
-  int moveOutTimeCap;
-  int moveOutTime;
+  int placeS;
+  int placeTimer;
   bool moveOutS;
 };
 #endif

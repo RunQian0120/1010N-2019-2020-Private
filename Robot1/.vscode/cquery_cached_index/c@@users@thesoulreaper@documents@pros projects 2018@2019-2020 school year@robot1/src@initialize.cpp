@@ -30,4 +30,8 @@ void initialize() {
     R.set_brake_mode(E_MOTOR_BRAKE_HOLD);
     L2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
     R2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+
+
+    Lift1.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    TrayAngler.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 }

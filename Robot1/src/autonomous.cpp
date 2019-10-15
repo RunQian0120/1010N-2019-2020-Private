@@ -11,4 +11,12 @@
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+
+    base.setLeftPower(63);
+    base.setRightPower(63);
+    delay(800);
+    base.setLeftPower(-63);
+    base.setRightPower(-63);
+    delay(1000);
+}
