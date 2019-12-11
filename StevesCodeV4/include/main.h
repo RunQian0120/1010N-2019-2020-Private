@@ -18,6 +18,7 @@ using namespace pros;
 
 
 extern bool multiAutonomousBool;
+extern bool slowOutTake;
 
 extern pros::Motor BR;
 extern pros::Motor BL;
@@ -39,7 +40,7 @@ extern Tray tray;
 extern pros::ADIDigitalIn anglerLimit;
 extern pros::ADIDigitalIn liftLimit;
 extern pros::ADIDigitalIn placeBump;
-extern pros::ADIAnalogIn placeLight;
+extern ADIAnalogIn placeLight;
 extern pros::ADIEncoder encoderR;
 extern pros::ADIEncoder encoderL;
 
@@ -50,8 +51,9 @@ extern pros::ADIEncoder encoderL;
 #define blPort 13 //*
 #define liftPort 18 //*
 #define trayPort 11 //*
-#define intake1Port 14 //*
+#define intake1Port 14 //* 14
 #define intake2Port 19 //*
+
 
 
 #ifdef __cplusplus

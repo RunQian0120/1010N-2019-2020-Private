@@ -48,7 +48,7 @@ void Lift::liftPID(int speedCap) {
 
   if(liftLimit.get_value() == 1) { //Using limit switch to make sure that motor doesn't break
     LiftM.tare_position(); //resetting position/settings for liftt
-  //  liftTarget = 0;
+    liftTarget = 0;
     if(partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) < - 10) { //if the limit switch it triggered then don't move back manually
         if(partner.get_digital(E_CONTROLLER_DIGITAL_DOWN)) {
           LiftM.move(liftPower+50);
@@ -59,6 +59,8 @@ void Lift::liftPID(int speedCap) {
         if(partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) >= 10) {
           LiftM.move(-partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y)); //still allow for the drivers to move the lift forward while lim is triggered
           liftTarget = LiftM.get_position();
+        } else {
+          LiftM.move(liftPower);
         }
     }
   } else if(liftLimit.get_value() == 0) { //allow for full range of motion and manual control when limit switch is not triggered
@@ -85,18 +87,29 @@ void Lift::drive() {
     setIntakePower(90);
   } else if((master.get_digital(E_CONTROLLER_DIGITAL_L2)) || partner.get_digital(E_CONTROLLER_DIGITAL_L2)) {
     setIntakePower(-90);
-  } else {
+  } else if(slowOutTake == false) {
     setIntakePower(0);
   }
 
   if(partner.get_digital(E_CONTROLLER_DIGITAL_DOWN)) {
     liftTarget = 0;
   } else if(partner.get_digital(E_CONTROLLER_DIGITAL_RIGHT)) {
-    liftTarget = -1100;
+    if(liftTarget == 0) {
+      slowOutTake = true;
+      liftTarget = -2400;
+    } else {
+      liftTarget = -2400;
+    }
   } else if(partner.get_digital(E_CONTROLLER_DIGITAL_UP)) {
-    liftTarget = -1500;
+    if(liftTarget == 0) {
+      slowOutTake = true;
+      liftTarget = -3000;
+    } else {
+      liftTarget = -3000;
+    }
+  } else if(partner.get_digital(E_CONTROLLER_DIGITAL_LEFT)) {
+    liftTarget = -3000;
   }
 
   liftPID(127);
-
 }

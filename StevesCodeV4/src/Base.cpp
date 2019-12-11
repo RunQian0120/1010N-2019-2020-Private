@@ -135,8 +135,8 @@ void Base::pidTurn(int dir, int target, int timeout, float kp, float kd, int spe
 
 //Autonomous PID Strafe
 void Base::pidStrafe(int dir, int target, int timeout, float kp, float kd, int speedCap){
-    //BR.tare_position();
-    encoderR.reset();
+    BR.tare_position();
+    //encoderR.reset();
 
     int encoderAverage = 0;
     int startTime = pros::millis();
@@ -149,7 +149,7 @@ void Base::pidStrafe(int dir, int target, int timeout, float kp, float kd, int s
 
       netTime  = pros::millis() - startTime;
 
-      encoderAverage = abs(encoderR.get_value());
+      encoderAverage = abs(BR.get_position());
 
       int error = target - encoderAverage;
 

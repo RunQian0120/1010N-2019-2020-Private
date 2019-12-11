@@ -1,16 +1,86 @@
 #include "main.h"
 
-#define RIGHT -1;
-#define LEFT 1;
-#define FORWARD 1;
-#define BACKWARD -1;
+#define right -1;
+#define left 1;
+#define forward 1;
+#define backward -1;
+
+void flipOut() {
+  lift.setIntakePower(90);
+  pros::delay(1000);
+  lift.setIntakePower(0);
+
+  pros::delay(100);
+  LiftM = -127;
+  pros::delay(1000);
+  LiftM = 0;
+  pros::delay(500);
+  LiftM = 127;
+
+}
+
+
+void blueProtected() {
+    flipOut();
+    lift.setIntakePower(127);
+
+    base.pidDrive(-1, 400, 1200, .2, 1.2, 127);
+    base.pidDrive(1, 200, 1000, .2, 1.2, 127);
+    base.pidStrafe(-1, 700, 1000, .35, 1.2, 127);
+    base.pidDrive(1, 500, 1000, .2, 1.2, 127);
+    base.pidStrafe(1, 200, 700, .35, 1.2, 127);
+    base.pidDrive(1, 500, 1000, .2, 1.2, 127);
+    base.pidTurn(-1, 350, 1000, .2, 1.2, 127);
+    base.pidDrive(1, 1300, 1200, .2, 1.2, 127);
+    base.pidTurn(-1, 650, 1200, .2 ,1.2, 127);
+    base.pidDrive(1, 1500, 3000, .2, 1.2, 70);
+}
+
+void redProtected() {
+  flipOut();
+  lift.setIntakePower(127);
+
+  base.pidDrive(-1, 500, 1200, .2, 1.2, 127);
+  base.pidDrive(1, 200, 1000, .2, 1.2, 127);
+  base.pidStrafe(1, 700, 1000, .35, 1.2, 127);
+  base.pidDrive(1, 500, 1000, .2, 1.2, 127);
+  base.pidStrafe(-1, 200, 700, .35, 1.2, 127);
+  base.pidDrive(1, 500, 1000, .2, 1.2, 127);
+  base.pidTurn(1, 350, 1000, .2, 1.2, 127);
+  base.pidDrive(1, 1300, 1200, .2, 1.2, 127);
+  base.pidTurn(1, 650, 1200, .2 ,1.2, 127);
+  base.pidDrive(1, 1500, 3000, .2, 1.2, 70);
+}
+
+void redUnprotected() {
+  flipOut();
+
+  lift.setIntakePower(127);
+  base.pidDrive(1, 1200, 2500, .2, 1.2, 127);
+
+  base.pidDrive(-1, 1150, 2000, .2, 1.2, 127);
+
+  base.pidStrafe(-1, 1050, 2000, .35, 1.1, 127);
+
+  base.pidDrive(1, 1200, 2000, .2, 1.2, 100);
+  lift.setIntakePower(0);
+
+  base.pidTurn(-1, 850, 1500, .2, 1.2, 127);
+
+  multiAutonomousBool = true;
+  base.pidDrive(1, 950, 1500, .2, 1.2, 127);
+
+}
 
 
 void autonomous() {
+  //blueProtected();
+  
 
-  multiAutonomousBool = true;
-  base.pidDrive(1, 1200, 2500, .35, 1.2, 85);
-
+//  multiAutonomousBool = true;
+//  base.pidDrive(1, 500, 1000, .2, 1.2, 127);
+//  base.pidTurn(1, 500, 1000, .2, 1.2, 127);
+//  base.pidStrafe(1, 500, 1000, .35, 1.2, 127);
 
 //Skills auto
 /*
@@ -26,14 +96,14 @@ LiftM = 15;
 pros::delay(300);
 
 base.pidDrive(1, 1200, 2500, .35, 1.2, 85);
-//base.pidTurn(1, 240, 1000, .4, 1.2, 127);
+
 base.pidDrive(-1, 1150, 2000, .35, 1.2, 127);
-//base.pidTurn(-1, 330, 1000, .4, 1.2, 127);
+
 base.pidStrafe(-1, 1050, 2000, .3, 1.1, 127);
 base.pidDrive(-1, 200, 700, .35, 1.2, 90);
 base.pidDrive(1, 1400, 5000, .35, 1.2, 60);
 lift.setIntakePower(0);
-//base.pidTurn(-1, 900, 3000, .4, 1.2, 95);
+
 base.pidDrive(-1, 950, 3000, .35, 1.2, 90);
 base.pidTurn(-1, 500, 1000, .4, 1.2, 127);
 base.pidStrafe(-1, 1000, 1000, .3, 1.1, 127);
