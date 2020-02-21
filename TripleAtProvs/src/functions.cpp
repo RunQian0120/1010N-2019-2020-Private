@@ -20,23 +20,24 @@ void cubeSet() {
 }
 
 void place() {
+  TrayM.tare_position();
   int time = pros::millis(); //Current Timestamp
   int netTime = 0;
   while(netTime < 5000) { //Sets timeout to 3 seconds
     netTime = pros::millis() - time;
     if(TrayM.get_position() > -2000) { //Sets boundaries for fast movement using encoder position
-      TrayM = -127;
-    } else if(TrayM.get_position() <= -2000 && TrayM.get_position() > -3800) { //Changes speeds based on encoder positions
-      TrayM = -80;
-    } else if (TrayM.get_position() <= -3800 && TrayM.get_position() > -5500) {
-      TrayM = -60;
+      TrayM.move_velocity(-100);
+    } else if(TrayM.get_position() <= -2000 && TrayM.get_position() > -2400) { //Changes speeds based on encoder positions
+      TrayM.move_velocity(-70);
+    } else if (TrayM.get_position() <= -2400 && TrayM.get_position() > -3825) {
+      TrayM.move_velocity(-40);
     }
 
-    if(TrayM.get_position() <= -5500) { //Tops the place if target position of tray is hit
+    if(TrayM.get_position() <= -3825) { //Tops the place if target position of tray is hit
       break;
     }
   }
-  TrayM = 0;
+  TrayM.move_velocity(0);
 }
 
 void autoLogic() {
@@ -75,23 +76,32 @@ void autoLogic() {
   } else if(slowOutTake == true) {
     Intake1.tare_position();
     Intake2.tare_position();
+  //  TrayM.tare_position();
     pros::delay(50);
-    while(Intake1.get_position() > -200){
-      Intake1 = -80;
-      Intake2 = -80;
+    while(Intake1.get_position() > -65 ){
+
+      if(Intake1.get_position() > -65) {
+        Intake1 = -80;
+        Intake2 = -80;
+      }
+    //  if(TrayM.get_position() > -950) {
+    //    TrayM.move_velocity(-100);
+    //  }
     }
     Intake1 = 0;
     Intake2 = 0;
+  //  TrayM.move_velocity(0);
     slowOutTake = false;
+
+
   } else if(autoTopCube == true) {
     autoTopCube = false;
-    while((abs(BR.get_position()) + abs(BL.get_position())) / 2 < 1500) {
+    while((abs(BR.get_position()) + abs(BL.get_position())) / 2 < 200) {
       pros::delay(1);
     }
 
-    LiftM.move(-60);
-    pros::delay(700);
-    LiftM = 0;
+    lift.movePos(500, 750);
+    resetLift = true;
   } else if(resetLift == true) {
     while(liftLimit.get_value() == 0) {
       LiftM.move(127);
@@ -110,7 +120,7 @@ void compLogic() {
   if(slowOutTake == true) {
     Intake1.tare_position();
     Intake2.tare_position();
-    pros::delay(50);
+    //pros::delay(50);
     while(Intake1.get_position() > -200){
       Intake1 = -80;
       Intake2 = -80;

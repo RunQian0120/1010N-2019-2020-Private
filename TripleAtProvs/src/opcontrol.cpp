@@ -3,6 +3,12 @@
 void opcontrol() {
 
   pros::lcd::initialize();
+
+  FL.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  FR.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  BL.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  BR.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+
   while(true) {
     //master.print(0,0, "Heading: %f", imu.get_heading());
     pros::lcd::print(0, "LiftPos: %f", LiftM.get_position());

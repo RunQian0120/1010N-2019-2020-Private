@@ -69,10 +69,6 @@ void initialize() {
   LiftM.tare_position();
   base.resetEncoder();
 
-  FL.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-  FR.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-  BL.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-  BR.set_brake_mode(E_MOTOR_BRAKE_HOLD);
   LiftM.set_brake_mode(E_MOTOR_BRAKE_HOLD);
   TrayM.set_brake_mode(E_MOTOR_BRAKE_HOLD);
   Intake1.set_brake_mode(E_MOTOR_BRAKE_HOLD);

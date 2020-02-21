@@ -75,7 +75,7 @@ void Tray::noLimitAnglerPIDLogic() {
 void Tray::autoTrayLogic(){
   if(master.get_digital(E_CONTROLLER_DIGITAL_RIGHT)) {
     placeS = 1;
-    anglerTarget = -3825;
+    anglerTarget = -3950;
     placeLogic = true;
   } else if(master.get_digital(E_CONTROLLER_DIGITAL_DOWN) || partner.get_digital(E_CONTROLLER_DIGITAL_B)) {
     placeS = 0;
@@ -84,23 +84,23 @@ void Tray::autoTrayLogic(){
   } else if(partner.get_digital(E_CONTROLLER_DIGITAL_A)) {
 
     placeS = 1;
-    anglerTarget = -3825;
+    anglerTarget = -3950;
   } else if(!partner.get_digital(E_CONTROLLER_DIGITAL_A) && placeLogic == false) {
     placeS = 0;
     anglerTarget = TrayM.get_position();
   }
 
   if(placeS == 1 && TrayM.get_position() >= -2000) {
-    anglerPID(100);
-  } else if(placeS == 1 && TrayM.get_position() < -2000 && TrayM.get_position() > -2400) {//1500
-    anglerPID(50);
-  } else if(placeS == 1 && TrayM.get_position() < -2400 && TrayM.get_position() >= -3825) {//2500
-    anglerPID(35);
+    anglerPID(65);
+  } else if(placeS == 1 && TrayM.get_position() < -2000 && TrayM.get_position() > -2900) {//1500
+    anglerPID(45);
+  } else if(placeS == 1 && TrayM.get_position() < -2900 && TrayM.get_position() >= -3950) {//2500
+    anglerPID(30);
   } else {
     anglerPID(100);
   }
 
-  if(TrayM.get_position() <= -3800) {
+  if(TrayM.get_position() <= -3900) {
     placeS = 0;
     anglerTarget = TrayM.get_position();
     placeLogic = false;
@@ -143,6 +143,39 @@ void Tray::anglerPID(int speedCap) {
      noLimitAnglerPIDLogic();
    } else if (anglerLimit.get_value() == 1) {
      limitAnglerPIDLogic();
+   }
+}
+
+void Tray::movePos(int pos, int timeout) {
+  TrayM.tare_position();
+  int encoderAverage = 0;
+  int startTime = pros::millis();
+  int netTime = 0;
+  int errorDiff = 0;
+  int errorLast = 0;
+  int error = pos;
+
+  while(netTime < timeout) {
+
+    netTime  = pros::millis() - startTime;
+
+    encoderAverage = abs(TrayM.get_position());
+    int error = pos - encoderAverage;
+
+    errorDiff = error - errorLast;
+
+    errorLast = error;
+
+    int p = .5*error;
+    int d = .3*errorDiff;
+
+     int motorPower = (p+d);
+
+     int rightPower = motorPower * -1;
+     int leftPower = motorPower * -1;
+
+     TrayM.move(rightPower);
+
    }
 }
 

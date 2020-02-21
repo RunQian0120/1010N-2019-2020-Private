@@ -7,18 +7,20 @@ Base::Base() {
   direction = 1;
 
   //Autonomous variables
-  pDrive = 0.35;
-  dDrive = 0.85;
+  pDrive = 0.18;
+  dDrive = 0.5;
 
-  pTurn = .45;
+  pTurn = .18;
   dTurn = 1.0;
 
-  pStrafe = 1.5;
-  dStrafe = 2.5;
+  pStrafe = .18;
+  dStrafe = 1.0;
 
-  pLine = .8;
+  pLine = .9;
   dLine = 3.0;
 
+  pUltra = .35;
+  dUltra = .65;
 }
 
 //Helper functions
@@ -37,10 +39,9 @@ void Base::setRightPower(int power) { //Sets Right Motor Power
   BR = power;
 }
 
-void Base::lineUp(int timeout, int speedCap) {
+void Base::lineUp(int timeout, int speedCap, int target) {
   int startTime = pros::millis();
   int netTime = 0;
-  int target = 250;
   int distR = 0;
   int distL = 0;
 
@@ -86,70 +87,41 @@ void Base::lineUp(int timeout, int speedCap) {
   BL.move(0);
 }
 
-void Base::halfLineUp(int timeout, int speedCap, int side) {
+void Base:: pidDriveUltra(int dir, int targetR, int targetL, int timeout, int speedCap) {
   int startTime = pros::millis();
   int netTime = 0;
-  int target = 200;
   int distR = 0;
   int distL = 0;
 
-  bool first = false;
-
   while(netTime < timeout) {
     netTime  = pros::millis() - startTime;
-
     int rightPower;
     int leftPower;
 
-    if(side == lineupR) {
+    distR = rightUltra.get_value();
+    distL = leftUltra.get_value();
 
-      distR = rightUltra.get_value();
-      int errorR = target - distR;
-      int errorLastR = errorR;
-      int errorDiffR = errorR - errorLastR;
-      rightPower = (pLine * errorR) + (dLine * errorDiffR);
+    int errorR = targetR - distR;
+    int errorL = targetL - distL;
 
-      if(leftUltra.get_value() >= target && first == false) {
-        leftPower  = -127;
-      } else if(first == true) {
-        distL = leftUltra.get_value();
-        int errorL = target - distL;
-        int errorLastL = errorL;
-        int errorDiffL = errorL - errorLastL;
-        leftPower  = (pLine * errorL) + (dLine * errorDiffL);
-      }
+    int errorLastR = errorR;
+    int errorLastL = errorL;
 
-      if(leftUltra.get_value() < target) {
-        first = true;
-      }
-
-    } else if(side == lineupL) {
-      distL = leftUltra.get_value();
-
-      int errorL = target - distL;
-
-      int errorLastL = errorL;
-
-      int errorDiffL = errorL - errorLastL;
+    int errorDiffR = errorR - errorLastR;
+    int errorDiffL = errorL - errorLastL;
 
 
-      leftPower  = (pLine * errorL) + (dLine * errorDiffL);
-      if(leftUltra.get_value() >= target) {
+    rightPower = (pUltra * errorR) + (dUltra * errorDiffR);
+    leftPower  = (pUltra * errorL) + (dUltra * errorDiffL);
 
-        rightPower = -127;
-      } else {
-        rightPower = 0;
-      }
-    }
 
-/*
     if(rightPower > speedCap || rightPower < -speedCap) {
       rightPower = (rightPower/abs(rightPower)) * speedCap;
     }
 
     if(leftPower > speedCap || leftPower < -speedCap) {
       leftPower = (leftPower/abs(leftPower)) * speedCap;
-    }*/
+    }
 
     FR.move(rightPower);
     BR.move(rightPower);
@@ -160,6 +132,7 @@ void Base::halfLineUp(int timeout, int speedCap, int side) {
   BR.move(0);
   FL.move(0);
   BL.move(0);
+
 }
 
 void Base::pidIMUTurn(int dir, int target, int timeout, int speedCap) {

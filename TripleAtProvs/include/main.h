@@ -86,7 +86,7 @@ extern pros::Imu imu;
 #define blPort 7 //*
 #define liftPort 4 //*
 #define trayPort 8 //*
-#define intake1Port 1 //* 14
+#define intake1Port 2 //* 14
 #define intake2Port 3 //*
 
 

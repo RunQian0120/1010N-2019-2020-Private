@@ -10,9 +10,29 @@ std::shared_ptr<OdomChassisController> chassis = ChassisControllerBuilder()
     .buildOdometry(); // build an odometry chassis
 
 void flipOut() {
-
+  LiftM.move(-127);
+  pros::delay(600);
+  LiftM.move(127);
+  pros::delay(600);
+  LiftM.move(0);
 }
 
+void driveBumper() {
+  while(true) {
+    if(placeBump.get_value() == 0) {
+      FL.move_velocity(70);
+      BL.move_velocity(70);
+      FR.move_velocity(70);
+      BR.move_velocity(70);
+    } else {
+      FL.move_velocity(0);
+      BL.move_velocity(0);
+      FR.move_velocity(0);
+      BR.move_velocity(0);
+      break;
+    }
+  }
+}
 
 void blueProtected() {
     flipOut();
@@ -47,20 +67,64 @@ void redProtected() {
 }
 
 void redUnprotected() {
-  flipOut();
+
+  /*flipOut();
 
   lift.setIntakePower(127);
+  pros::delay(600);
+  //autoTopCube = true;
+  base.pidDrive(1, 1800, 1400, 100);
+  lift.movePos(750, 600);
+  base.pidDrive(1, 500, 500, 110);
+  resetLift = true;
+  pros::delay(600);
+  base.pidTurn(left, 625, 1000,127);
+
+  base.pidDrive(-1, 2755, 1500, 127);
+  base.pidTurn(right, 600, 800, 127);
+  base.lineUp(500, 127, 200);
+  base.pidDrive(1, 2700, 2500, 80);
+  base.lineUp(1800, 127, 200);
+  base.pidTurn(right, 1000, 1000, 127);
+  multiPlace = true;
+  base.pidStrafe(right, 800, 800, 127);
+  driveBumper();*/
+
+/*
+  //flipOut();
+  lift.setIntakePower(127);
+  pros::delay(1000);
+  base.pidDriveUltra(1, 680, 682, 1400, 100); //550, 555
 
   //autoTopCube = true;
-  base.pidDrive(1, 2000, 3500, 90);
-  pros::delay(50);
-  lift.movePos(700, 500);
-  base.pidDrive(1, 500, 500, 90);
-  resetLift = true;
-  pros::delay(500);
-  base.pidTurn(left, 550, 1000,127);
+  slowOutTake = true;
+  lift.movePos(500, 750);
+  //tray.movePos(975, 700);
+  lift.setIntakePower(127);
+  base.pidDrive(1, 800, 900, 60);
+  resetLift = true;*/
 
-  base.lineUp(3000, 100);
+  flipOut();
+  lift.setIntakePower(127);
+  pros::delay(1000);
+  base.lineUp(500, 127, 100);
+  base.pidDriveUltra(1, 680, 682, 1400, 100); //550, 555
+
+  base.pidTurn(left, 720, 1000,127);
+  base.pidDrive(-1, 2600, 1500, 127);
+  base.pidTurn(right, 700, 800, 127);
+  base.lineUp(500, 127, 200);
+  base.pidDrive(1, 2400, 2500, 80);
+  //base.pidStrafe(left, 800, 1000, 127);
+  //base.pidDrive(1,500, 1000, 127);
+  base.lineUp(1800, 127, 300);
+  base.pidTurn(right, 1000, 1000, 127);
+  multiPlace = true;
+  base.pidStrafe(right, 1000, 900, 127);
+  driveBumper();
+
+  //autoTopCube = true;
+
 }
 
 void blueUnprotected() {
@@ -118,14 +182,18 @@ void skillsAuto() {
   base.pidDrive(forward, 850, 1500, 127);
   lift.setIntakePower(-90);
   pros::delay(800);
-  base.lineUp(2000, 127);
+  base.lineUp(2000, 127, 100);
 }
 
 
 void autonomous() {
 
+  FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
   redUnprotected();
-  //base.pidTurn(1, 1000, 10000, 127);
+  //base.pidDriveUltra(1, 545, 555, 10000, 127);
 
   //base.pidIMUTurn(left, 270, 1000, 127);
 //  redUnprotected();

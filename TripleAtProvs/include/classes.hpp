@@ -15,8 +15,8 @@ public:
     void pidStrafe(int dir, int target, int timeout, int speedCap); //Autnomous PID Strafe
     void pidIMUTurn(int dir, int target, int timeout, int speedCap);
 
-    void lineUp (int timeout, int speedCap);
-    void halfLineUp (int timeout, int speedCap, int side);
+    void lineUp (int timeout, int speedCap, int target);
+    void pidDriveUltra (int dir, int targetR, int targetL, int timeout, int speedCap);
 
     void resetEncoder(); //Help encoder resetter
     int direction;
@@ -34,6 +34,9 @@ private:
 
   float pLine;
   float dLine;
+
+  float pUltra;
+  float dUltra;
 };
 
 class Tray {
@@ -44,6 +47,7 @@ public:
   void drive();
 
   void anglerPID(int speedCap);
+  void movePos(int pos, int timeout);
 
   int anglerTarget;
 
