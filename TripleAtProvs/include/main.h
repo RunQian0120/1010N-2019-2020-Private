@@ -14,6 +14,12 @@ using namespace pros;
 
 using namespace okapi;
 
+#define trayRange1 -2000
+#define trayRange2 -2800
+#define trayFinal -3950
+
+#define lowPreset -1550
+#define topPreset -2050
 
 extern bool multiArmUp;
 extern bool multiArmDown;
@@ -22,6 +28,7 @@ extern bool slowOutTake;
 extern bool dunk;
 
 extern bool autoTopCube;
+extern bool autoTrayUp;
 
 extern bool resetLift;
 extern bool resetAngler;
@@ -35,6 +42,7 @@ extern bool newLiftDown;
 
 extern bool lowTower;
 extern bool highTower;
+
 
 extern pros::Motor BR;
 extern pros::Motor BL;
@@ -69,7 +77,7 @@ extern pros::ADIUltrasonic leftUltra;
 
 extern pros::Imu imu;
 
-#define imuPort 5 //NEW ROBOT
+#define imuPort 21 //NEW ROBOT
 
 #define rightUltraP1 5
 #define rightUltraP2 6

@@ -20,20 +20,19 @@ void cubeSet() {
 }
 
 void place() {
-  TrayM.tare_position();
   int time = pros::millis(); //Current Timestamp
   int netTime = 0;
   while(netTime < 5000) { //Sets timeout to 3 seconds
     netTime = pros::millis() - time;
-    if(TrayM.get_position() > -2000) { //Sets boundaries for fast movement using encoder position
-      TrayM.move_velocity(-100);
-    } else if(TrayM.get_position() <= -2000 && TrayM.get_position() > -2400) { //Changes speeds based on encoder positions
-      TrayM.move_velocity(-70);
-    } else if (TrayM.get_position() <= -2400 && TrayM.get_position() > -3825) {
+    if(TrayM.get_position() > trayRange1) { //Sets boundaries for fast movement using encoder position
+      TrayM.move_velocity(-50);
+    } else if(TrayM.get_position() <= trayRange1 && TrayM.get_position() > trayRange2) { //Changes speeds based on encoder positions
       TrayM.move_velocity(-40);
+    } else if (TrayM.get_position() <= trayRange2 && TrayM.get_position() > trayFinal+500) {
+      TrayM.move_velocity(-20);
     }
 
-    if(TrayM.get_position() <= -3825) { //Tops the place if target position of tray is hit
+    if(TrayM.get_position() <= trayFinal+500) { //Tops the place if target position of tray is hit
       break;
     }
   }
@@ -42,10 +41,11 @@ void place() {
 
 void autoLogic() {
   if(multiPlace) {
-  //  cubeSet();
-    //pros::delay(500);
-    lift.setIntakePower(-70);
-    pros::delay(150);
+  //  cubeSet()
+
+    pros::delay(1100);
+    lift.setIntakePower(-30);
+    pros::delay(100);
     lift.setIntakePower(0);
     place();
     multiPlace = false;
@@ -107,6 +107,9 @@ void autoLogic() {
       LiftM.move(127);
     }
     resetLift = false;
+  } else if(autoTrayUp == true) {
+    tray.movePos(2000, 1500);
+    autoTrayUp = false;
   }
 
 }

@@ -14,6 +14,7 @@ public:
     void pidTurn(int dir, int target, int timeout, int speedCap);  // Autonomous PID Turns
     void pidStrafe(int dir, int target, int timeout, int speedCap); //Autnomous PID Strafe
     void pidIMUTurn(int dir, int target, int timeout, int speedCap);
+    void pidDriveBumper(int target, int timeout, int speedCap);
 
     void lineUp (int timeout, int speedCap, int target);
     void pidDriveUltra (int dir, int targetR, int targetL, int timeout, int speedCap);

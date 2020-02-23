@@ -13,14 +13,14 @@ Base::Base() {
   pTurn = .18;
   dTurn = 1.0;
 
-  pStrafe = .18;
-  dStrafe = 1.0;
+  pStrafe = 1.0;
+  dStrafe = 0.0;
 
   pLine = .9;
   dLine = 3.0;
 
-  pUltra = .35;
-  dUltra = .65;
+  pUltra = .5;
+  dUltra = .8;
 }
 
 //Helper functions
@@ -141,23 +141,21 @@ void Base::pidIMUTurn(int dir, int target, int timeout, int speedCap) {
   int origin_angle = 0;
   int ref_angle = 0;
 //  bool past_zero = false;
-
-  if(imu.get_heading() > 358 || imu.get_heading() < 2) {
-    origin_angle = 0;
-  } else {
-    origin_angle = imu.get_heading();
-  }
+  int target_angle = target;
+  origin_angle = imu.get_heading();
 
 
-  if(dir == right && origin_angle > target) { //Needs to pass origin
+  if(dir == right && origin_angle > target_angle) { //Needs to pass origin
     s = 1;
     ref_angle = 360-origin_angle;
     target = target + ref_angle;
-  } else if(dir == left && origin_angle > target) { //Don't need to pass origin
+  } else if(dir == right && origin_angle < target_angle) {
+    s = 0;
+  } else if(dir == left && origin_angle > target_angle) { //Don't need to pass origin
     s = 2;
   //  ref_angle = origin_angle -target;
     target = origin_angle-target;
-  } else if(dir == left && origin_angle < target) {
+  } else if(dir == left && origin_angle < target_angle) {
     s = 3;
   //  ref_angle = (360-target) + origin_angle;
     target = origin_angle + (360-target);
@@ -179,41 +177,28 @@ void Base::pidIMUTurn(int dir, int target, int timeout, int speedCap) {
 
     int current_ref_angle = 0;
 
-    if(s == 1 && imu.get_heading() > target) {
-      current_ref_angle = 360-imu.get_heading();
-      encoderAverage = current_ref_angle - ref_angle;
-
-    } else if(s == 1 && imu.get_heading() <= target) {
-      encoderAverage = imu.get_heading() + ref_angle;
-
-    } else if(s == 2 && imu.get_heading() > target) {
-    //  current_ref_angle = ref_angle - imu.get_heading();
-      encoderAverage = origin_angle-imu.get_heading();
-    } else if(s == 3 && imu.get_heading() < target && s1 == false) {
-
-      //current_ref_angle = ref_angle -imu.get_heading();
-      encoderAverage = origin_angle-imu.get_heading();
-
-    } else if(s == 3 && imu.get_heading() >= target) {
-      s1 = true;
-      encoderAverage = origin_angle + (360-imu.get_heading());
-
-    } else if(dir == right) {
+    if(s == 0) {
       encoderAverage = imu.get_heading();
-    }
+    //  pros::lcd::print(0, "Hello1");
+  } else if(s == 1 && imu.get_heading() >= target) {
 
+      encoderAverage = imu.get_heading() - origin_angle;
+
+    } else if(s == 1 && imu.get_heading() < target) {
+      encoderAverage = imu.get_heading() + 360-origin_angle;
+    }
     int error = target - encoderAverage;
 
 
-    pros::lcd::print(0, "encoderAverage: %d", encoderAverage);
-    pros::lcd::print(1, "error: %d", error);
+  //  pros::lcd::print(0, "encoderAverage: %d", encoderAverage);
+  //  pros::lcd::print(1, "error: %d", error);
 
 
     errorDiff = error - errorLast;
     errorLast = error;
 
-    int p = 3.0*error;
-    int d = 6.0*errorDiff;
+    int p = 2.5*error;
+    int d = 1.0*errorDiff;
 
      int motorPower = (p+d);
      if(motorPower>speedCap){
@@ -224,7 +209,7 @@ void Base::pidIMUTurn(int dir, int target, int timeout, int speedCap) {
      }
 
 //     master.print(0,0, "power: %d", motorPower);
-     motorPower = motorPower * dir;
+     motorPower *= dir;
 
      FR.move(motorPower);
      BR.move(motorPower);
@@ -386,6 +371,58 @@ void Base::pidStrafe(int dir, int target, int timeout, int speedCap){
       FL.move(0);
       BR.move(0);
       BL.move(0);
+}
+
+void Base::pidDriveBumper (int target, int timeout, int speedCap) {
+  BR.tare_position();
+  BL.tare_position();
+
+  int encoderAverage = 0;
+  int startTime = pros::millis();
+  int netTime = 0;
+  int errorDiff = 0;
+  int errorLast = 0;
+  int error = target;
+
+  while(netTime < timeout && placeBump.get_value() == 0) {
+
+    netTime  = pros::millis() - startTime;
+
+    encoderAverage = abs((abs(BR.get_position())+abs(BL.get_position())))/2;
+    int error = target - encoderAverage;
+
+    errorDiff = error - errorLast;
+
+    errorLast = error;
+
+    int p = pDrive*error;
+    int d = dDrive*errorDiff;
+
+     int motorPower = (p+d);
+     if(motorPower>speedCap){
+       motorPower = speedCap;
+     }
+     if(motorPower<-speedCap){
+       motorPower =-speedCap;
+     }
+
+
+     int rightPower = motorPower;
+     int leftPower = motorPower;
+
+     FR.move(rightPower);
+     BR.move(rightPower);
+
+     FL.move(leftPower);
+     BL.move(leftPower);
+
+
+    }
+    FR.move(0);
+    FL.move(0);
+    BR.move(0);
+    BL.move(0);
+
 }
 
 //EXPO drive function for better control

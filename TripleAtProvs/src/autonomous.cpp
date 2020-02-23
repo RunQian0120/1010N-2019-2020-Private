@@ -18,20 +18,25 @@ void flipOut() {
 }
 
 void driveBumper() {
-  while(true) {
+  bool breaker = false;
+  int startTime = pros::millis();
+  int netTime = 0;
+  while(breaker == false && netTime <= 2000) {
+    netTime  = pros::millis() - startTime;
     if(placeBump.get_value() == 0) {
-      FL.move_velocity(70);
-      BL.move_velocity(70);
-      FR.move_velocity(70);
-      BR.move_velocity(70);
+      FL.move_velocity(80);
+      BL.move_velocity(80);
+      FR.move_velocity(80);
+      BR.move_velocity(80);
     } else {
       FL.move_velocity(0);
       BL.move_velocity(0);
       FR.move_velocity(0);
       BR.move_velocity(0);
-      break;
+      breaker = true;
     }
   }
+
 }
 
 void blueProtected() {
@@ -90,20 +95,41 @@ void redUnprotected() {
   base.pidStrafe(right, 800, 800, 127);
   driveBumper();*/
 
+  TrayM.tare_position();
+  flipOut();
+  lift.setIntakePower(127);
+  base.lineUp(600, 127, 100);
+  base.pidDriveUltra(1, 680, 682, 1200, 100);
+  lift.movePos(450, 400);
+
+  lift.setIntakePower(127);
+  base.pidDrive(1, 700, 800, 50);
+  resetLift = true;
+
+  base.pidTurn(left, 620, 700,127);
+  base.pidDrive(-1, 2800, 1500, 127);
+  base.pidTurn(right, 600, 700, 127);
+  base.lineUp(500, 127, 200);
+  //base.lineUp(500, 127, 200);
+
+  base.pidDrive(1, 2400, 2500, 80);
+  //base.pidStrafe(left, 800, 1000, 127);
+  //base.pidDrive(1,500, 1000, 127);
+  autoTrayUp = true;
+
+  base.pidIMUTurn(right, 155, 2000, 90);
+  multiPlace = true;
+  base.pidDriveBumper(3000, 2000, 100);
+  base.pidDrive(1, 300, 1800, 70);
+  base.pidDrive(-1, 1000, 1000, 127);
+  /*
+  base.lineUp(1800, 100, 180);
+  base.pidIMUTurn(right, 90, 1200,90);
+  multiPlace = true;
+  base.pidStrafe(right, 1400, 1200, 127);
+  driveBumper();
+  base.pidDrive(-1, 200, 1000, 127);*/
 /*
-  //flipOut();
-  lift.setIntakePower(127);
-  pros::delay(1000);
-  base.pidDriveUltra(1, 680, 682, 1400, 100); //550, 555
-
-  //autoTopCube = true;
-  slowOutTake = true;
-  lift.movePos(500, 750);
-  //tray.movePos(975, 700);
-  lift.setIntakePower(127);
-  base.pidDrive(1, 800, 900, 60);
-  resetLift = true;*/
-
   flipOut();
   lift.setIntakePower(127);
   pros::delay(1000);
@@ -123,7 +149,7 @@ void redUnprotected() {
   base.pidStrafe(right, 1000, 900, 127);
   driveBumper();
 
-  //autoTopCube = true;
+  //autoTopCube = true;*/
 
 }
 
@@ -175,14 +201,25 @@ void moveLiftPos(int speed, int timeOut) {
 
 
 void skillsAuto() {
+  base.pidDrive(1, 200, 400, 127);
   flipOut();
+  lift.setIntakePower(127);
+  pros::delay(2000);
+  base.pidIMUTurn(right, 45, 1000, 127);
+  slowOutTake = true;
+  lift.movePos(1700, 1000);
+  base.pidDrive(forward, 1200, 1500, 127);
+  lift.setIntakePower(-60);
+  pros::delay(1000);
+  base.pidDrive(-1, 1200, 1500, 127);
+  base.pidIMUTurn(left, 0, 1000, 127);
+  base.lineUp(2000, 127, 150);
+  LiftM = 127;
+  pros::delay(1000);
+  LiftM = 0;
 
-//  slowOutTake = true;
-  lift.movePos(1495, 1000);
-  base.pidDrive(forward, 850, 1500, 127);
-  lift.setIntakePower(-90);
-  pros::delay(800);
-  base.lineUp(2000, 127, 100);
+  lift.setIntakePower(127);
+  base.pidDrive(1, 6000, 10000, 80);
 }
 
 
@@ -192,10 +229,11 @@ void autonomous() {
   FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
   BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
   BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
-  redUnprotected();
-  //base.pidDriveUltra(1, 545, 555, 10000, 127);
-
-  //base.pidIMUTurn(left, 270, 1000, 127);
+  base.pidIMUTurn(right, 90, 10000, 127);
+//  skillsAuto();
+  /*autoTrayUp = true;
+  pros::delay(2000);
+  multiPlace = true;*/
 //  redUnprotected();
 //  moveLiftPos(-127, 1000);
 /*

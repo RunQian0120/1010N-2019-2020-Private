@@ -75,32 +75,41 @@ void Tray::noLimitAnglerPIDLogic() {
 void Tray::autoTrayLogic(){
   if(master.get_digital(E_CONTROLLER_DIGITAL_RIGHT)) {
     placeS = 1;
-    anglerTarget = -3950;
+    anglerTarget = trayFinal;
     placeLogic = true;
   } else if(master.get_digital(E_CONTROLLER_DIGITAL_DOWN) || partner.get_digital(E_CONTROLLER_DIGITAL_B)) {
     placeS = 0;
     resetAngler = true;
     placeLogic = true;
   } else if(partner.get_digital(E_CONTROLLER_DIGITAL_A)) {
-
     placeS = 1;
-    anglerTarget = -3950;
-  } else if(!partner.get_digital(E_CONTROLLER_DIGITAL_A) && placeLogic == false) {
+    anglerTarget = trayFinal;
+  } else if(partner.get_digital(E_CONTROLLER_DIGITAL_X)) {
+    placeS = 2;
+    anglerTarget = trayFinal;
+  } else if((!partner.get_digital(E_CONTROLLER_DIGITAL_A) || !partner.get_digital(E_CONTROLLER_DIGITAL_X)) && placeLogic == false) {
     placeS = 0;
     anglerTarget = TrayM.get_position();
   }
 
-  if(placeS == 1 && TrayM.get_position() >= -2000) {
-    anglerPID(65);
-  } else if(placeS == 1 && TrayM.get_position() < -2000 && TrayM.get_position() > -2900) {//1500
-    anglerPID(45);
-  } else if(placeS == 1 && TrayM.get_position() < -2900 && TrayM.get_position() >= -3950) {//2500
+  if(placeS == 2 && TrayM.get_position() >= trayRange1) {
+    anglerPID(40);
+  } else if(placeS == 2 && TrayM.get_position() < trayRange1 && TrayM.get_position() > trayRange2) {//1500
     anglerPID(30);
+  } else if(placeS == 2 && TrayM.get_position() < trayRange2 && TrayM.get_position() >= trayFinal) {//2500
+    anglerPID(15);
+  } else if(placeS == 1 && TrayM.get_position() >= trayRange1) {
+    anglerPID(60);
+  } else if(placeS == 1 && TrayM.get_position() < trayRange1 && TrayM.get_position() > trayRange2) {//1500
+    anglerPID(50);
+  } else if(placeS == 1 && TrayM.get_position() < trayRange2 && TrayM.get_position() >= trayFinal) {//2500
+    anglerPID(25);
+
   } else {
     anglerPID(100);
   }
 
-  if(TrayM.get_position() <= -3900) {
+  if(TrayM.get_position() <= trayFinal + 20) {
     placeS = 0;
     anglerTarget = TrayM.get_position();
     placeLogic = false;

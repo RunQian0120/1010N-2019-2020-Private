@@ -51,7 +51,7 @@ pros::Imu imu (imuPort);
 bool liftDown = false;
 bool newLiftDown = false;
 bool lightS = false;
-
+bool autoTrayUp = false;
 
 void initialize() {
   imu.reset();

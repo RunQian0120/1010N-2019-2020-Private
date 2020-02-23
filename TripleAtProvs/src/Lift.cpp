@@ -95,19 +95,19 @@ void Lift::presetLogic() {
     if(liftTarget == 0) {
       liftS = true;
       slowOutTake = true;
-      liftTarget = -1495;
+      liftTarget = lowPreset;
     } else {
       liftS = true;
-      liftTarget = -1495;
+      liftTarget = lowPreset;
     }
   } else if(master.get_digital(E_CONTROLLER_DIGITAL_X)) {
     if(liftTarget == 0) {
       liftS = true;
       slowOutTake = true;
-      liftTarget = -1950;
+      liftTarget = topPreset;
     } else {
       liftS = true;
-      liftTarget = -1950;
+      liftTarget = topPreset;
     }
   } else if(master.get_digital(E_CONTROLLER_DIGITAL_Y)) {
     liftTarget = 0;
@@ -121,25 +121,25 @@ void Lift::presetLogic() {
     if(liftTarget == 0) {
       liftS = true;
       slowOutTake = true;
-      liftTarget = -1495;
+      liftTarget = lowPreset;
     } else {
       liftS = true;
-      liftTarget = -1495;
+      liftTarget = lowPreset;
     }
   } else if(partner.get_digital(E_CONTROLLER_DIGITAL_UP)) {
     liftS = true;
     if(liftTarget == 0) {
       slowOutTake = true;
-      liftTarget = -1950;
+      liftTarget = topPreset;
     } else {
-      liftTarget = -1950;
+      liftTarget = topPreset;
     }
   } else if(partner.get_digital(E_CONTROLLER_DIGITAL_LEFT)) {
     liftS = true;
-    liftTarget = -1950;
+    liftTarget = topPreset;
   }
 
-  if(LiftM.get_position() <= -1490) {
+  if(LiftM.get_position() <= -1545) {
     liftS = false;
   }
 }
