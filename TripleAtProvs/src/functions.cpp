@@ -28,11 +28,11 @@ void place() {
       TrayM.move_velocity(-50);
     } else if(TrayM.get_position() <= trayRange1 && TrayM.get_position() > trayRange2) { //Changes speeds based on encoder positions
       TrayM.move_velocity(-40);
-    } else if (TrayM.get_position() <= trayRange2 && TrayM.get_position() > trayFinal+500) {
+    } else if (TrayM.get_position() <= trayRange2 && TrayM.get_position() > trayFinal+200) {
       TrayM.move_velocity(-20);
     }
 
-    if(TrayM.get_position() <= trayFinal+500) { //Tops the place if target position of tray is hit
+    if(TrayM.get_position() <= trayFinal+200) { //Tops the place if target position of tray is hit
       break;
     }
   }

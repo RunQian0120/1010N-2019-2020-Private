@@ -16,9 +16,13 @@ using namespace okapi;
 
 #define trayRange1 -2000
 #define trayRange2 -2800
-#define trayFinal -3950
+#define trayFinal -3800 //-3950
 
-#define lowPreset -1550
+#define speed1 60
+#define speed2 50
+#define speed3 25
+
+#define lowPreset -1700
 #define topPreset -2050
 
 extern bool multiArmUp;

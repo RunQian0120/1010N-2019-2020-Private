@@ -179,16 +179,21 @@ void Base::pidIMUTurn(int dir, int target, int timeout, int speedCap) {
 
     if(s == 0) {
       encoderAverage = imu.get_heading();
-    //  pros::lcd::print(0, "Hello1");
-  } else if(s == 1 && imu.get_heading() >= target) {
-
+    } else if(s == 1 && imu.get_heading() >= target && s1 == false) {
       encoderAverage = imu.get_heading() - origin_angle;
-
     } else if(s == 1 && imu.get_heading() < target) {
+      s1 = true;
       encoderAverage = imu.get_heading() + 360-origin_angle;
+    } else if(s == 2) {
+      encoderAverage = origin_angle-imu.get_heading();
+    } else if(s == 3 && imu.get_heading() < target_angle && s1 == false) {
+      encoderAverage = origin_angle-imu.get_heading();
+
+    } else if(s == 3 && imu.get_heading() >= target_angle) {
+      s1 = true;
+      encoderAverage = origin_angle + (360-imu.get_heading());
     }
     int error = target - encoderAverage;
-
 
   //  pros::lcd::print(0, "encoderAverage: %d", encoderAverage);
   //  pros::lcd::print(1, "error: %d", error);

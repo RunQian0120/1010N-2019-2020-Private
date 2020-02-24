@@ -99,11 +99,11 @@ void Tray::autoTrayLogic(){
   } else if(placeS == 2 && TrayM.get_position() < trayRange2 && TrayM.get_position() >= trayFinal) {//2500
     anglerPID(15);
   } else if(placeS == 1 && TrayM.get_position() >= trayRange1) {
-    anglerPID(60);
+    anglerPID(speed1);
   } else if(placeS == 1 && TrayM.get_position() < trayRange1 && TrayM.get_position() > trayRange2) {//1500
-    anglerPID(50);
+    anglerPID(speed2);
   } else if(placeS == 1 && TrayM.get_position() < trayRange2 && TrayM.get_position() >= trayFinal) {//2500
-    anglerPID(25);
+    anglerPID(speed3);
 
   } else {
     anglerPID(100);

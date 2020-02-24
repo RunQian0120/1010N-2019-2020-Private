@@ -17,17 +17,17 @@ void flipOut() {
   LiftM.move(0);
 }
 
-void driveBumper() {
+void driveBumper(int speed) {
   bool breaker = false;
   int startTime = pros::millis();
   int netTime = 0;
   while(breaker == false && netTime <= 2000) {
     netTime  = pros::millis() - startTime;
     if(placeBump.get_value() == 0) {
-      FL.move_velocity(80);
-      BL.move_velocity(80);
-      FR.move_velocity(80);
-      BR.move_velocity(80);
+      FL.move_velocity(70);
+      BL.move_velocity(70);
+      FR.move_velocity(70);
+      BR.move_velocity(70);
     } else {
       FL.move_velocity(0);
       BL.move_velocity(0);
@@ -122,6 +122,7 @@ void redUnprotected() {
   base.pidDriveBumper(3000, 2000, 100);
   base.pidDrive(1, 300, 1800, 70);
   base.pidDrive(-1, 1000, 1000, 127);
+
   /*
   base.lineUp(1800, 100, 180);
   base.pidIMUTurn(right, 90, 1200,90);
@@ -211,7 +212,7 @@ void skillsAuto() {
   base.pidDrive(forward, 1200, 1500, 127);
   lift.setIntakePower(-60);
   pros::delay(1000);
-  base.pidDrive(-1, 1200, 1500, 127);
+  base.pidDrive(-1, 1150, 1500, 127);
   base.pidIMUTurn(left, 0, 1000, 127);
   base.lineUp(2000, 127, 150);
   LiftM = 127;
@@ -219,7 +220,29 @@ void skillsAuto() {
   LiftM = 0;
 
   lift.setIntakePower(127);
-  base.pidDrive(1, 6000, 10000, 80);
+  base.pidDrive(1, 4000, 3000, 80);
+  base.pidTurn(right, 0, 1000, 127);
+  base.pidDrive(1, 5000, 3000, 80);
+  autoTrayUp = true;
+  base.pidIMUTurn(right, 90, 1000, 127);
+  base.pidStrafe(left, 2500, 1800, 127);
+  //driveBumper(70);
+  base.pidDriveBumper(500, 2000,60);
+  multiPlace = true;
+  pros::delay(4000);
+  base.pidDrive(-1, 2000, 2000, 100);
+  base.pidStrafe(right, 1550, 3000, 127);
+  TrayM = 127;
+  pros::delay(1500);
+  TrayM = 0;
+  base.pidIMUTurn(left, 270, 2000, 127);
+  lift.setIntakePower(127);
+  base.pidDrive(1, 1300, 2000, 127);
+  base.pidDrive(-1, 400, 2000, 127);
+  lift.setIntakePower(0);
+  slowOutTake = true;
+  lift.movePos(2000, 2000);
+  lift.setIntakePower(-70);
 }
 
 
@@ -229,12 +252,14 @@ void autonomous() {
   FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
   BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
   BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
-  base.pidIMUTurn(right, 90, 10000, 127);
-//  skillsAuto();
+//  base.pidIMUTurn(right, 90, 10000, 127);
+  skillsAuto();
+//  base.pidDriveBumper(300, 1000, 70);
+//  base.pidIMUTurn(left, 270, 1000, 127);
   /*autoTrayUp = true;
   pros::delay(2000);
   multiPlace = true;*/
-//  redUnprotected();
+//redUnprotected();
 //  moveLiftPos(-127, 1000);
 /*
   base.pidDrive(1, 250, 1000, 127);
