@@ -226,47 +226,121 @@ void moveLiftPos(int speed, int timeOut) {
 
 
 void skillsAuto() {
-  base.pidDrive(1, 200, 400, 127);
+  //Flipout start
+  base.pidDrive(1, 200, 300, 127);//400
   flipOut();
   lift.setIntakePower(127);
-  pros::delay(2000);
-  base.pidIMUTurn(right, 45, 1000, 127);
+  pros::delay(500);
+
+  //turn to tower
+  base.pidIMUTurn(right, 45, 500, 127);//1000
+//make a task
   slowOutTake = true;
-  lift.movePos(1700, 1000);
-  base.pidDrive(forward, 1200, 1500, 127);
+  lift.movePos(1700, 900);//1000
+
+  base.pidDrive(forward, 1200, 1000, 127);
+
+  //score on tower
   lift.setIntakePower(-60);
   pros::delay(1000);
+
+  //Drive back
   base.pidDrive(-1, 1150, 1500, 127);
+
+  //turn straight
   base.pidIMUTurn(left, 0, 1000, 127);
+
+  //smack fence
   base.lineUp(2000, 127, 150);
+
+  //Arm down
+  LiftM = 127;
+  pros::delay(500);
+  LiftM = 0;
+
+  //intake line
+  lift.setIntakePower(127);
+  base.pidDrive(1, 4000, 3000, 80);
+
+  //turn off tower
+  base.pidIMUTurn(right, 0, 600,127);
+
+  //next line
+  base.pidDrive(1, 5000, 3000, 80);
+
+  base.pidIMUDrive(1, 5000, 0,  2800, 80);
+
+  autoTrayUp = true;
+
+  //turn to score
+  base.pidIMUTurn(right, 90, 1000, 127);
+
+  //line up on fence
+  base.pidStrafe(left, 2500, 1500, 127);
+
+  //driveBumper(70);
+
+  //score
+  base.pidDriveBumper(500, 1000,60);
+  multiPlace = true;
+
+  pros::delay(5000);//4000
+
+  //drive back and turn around
+  base.pidDrive(-1, 2000, 2000, 100);
+  //use multitasking
+  TrayM = 127;
+  pros::delay(2700);
+  TrayM = 0;
+  base.pidStrafe(left, 600, 1200, 127);
+  base.pidStrafe(right, 1750, 2000, 127); //1550
+
+  lift.setIntakePower(127);
+
+
+  base.pidIMUTurn(left, 270, 1950, 127);
+  base.pidDrive(1, 1200, 1500, 60);//1300
+  base.pidDrive(-1, 400, 1000, 127);
+  lift.setIntakePower(0);
+  slowOutTake = true;
+  lift.movePos(2000, 1000);
+  base.pidDrive(1, 300, 1000, 60);
+
+
+  FL.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  FR.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  BL.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  BR.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+
+  lift.setIntakePower(-90);
+  pros::delay(1300);
+
+
+  FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+
+
+  base.pidDrive(-1, 400, 1000, 60);//300
+  base.pidIMUTurn(left, 180, 1000, 127);
+  //base.lineUp(1500, 127, 400);
+  lift.setIntakePower(127);
+
   LiftM = 127;
   pros::delay(1000);
   LiftM = 0;
+  pros::delay(500);
 
-  lift.setIntakePower(127);
-  base.pidDrive(1, 4000, 3000, 80);
-  base.pidTurn(right, 0, 1000, 127);
-  base.pidDrive(1, 5000, 3000, 80);
-  autoTrayUp = true;
-  base.pidIMUTurn(right, 90, 1000, 127);
-  base.pidStrafe(left, 2500, 1800, 127);
-  //driveBumper(70);
-  base.pidDriveBumper(500, 2000,60);
-  multiPlace = true;
-  pros::delay(4000);
-  base.pidDrive(-1, 2000, 2000, 100);
-  base.pidStrafe(right, 1550, 3000, 127);
-  TrayM = 127;
-  pros::delay(1500);
-  TrayM = 0;
-  base.pidIMUTurn(left, 270, 2000, 127);
-  lift.setIntakePower(127);
-  base.pidDrive(1, 1300, 2000, 127);
-  base.pidDrive(-1, 400, 2000, 127);
-  lift.setIntakePower(0);
-  slowOutTake = true;
-  lift.movePos(2000, 2000);
-  lift.setIntakePower(-70);
+  //base.pidIMUDrive(1, right, 4000, 180, 3000, 80);
+  base.pidDrive(-1, 500, 1000, 127);
+  base.pidDriveUltra(1, 1200,1200, 2000, 80);
+  base.pidIMUTurn(right, 180, 500, 127);
+  base.pidIMUDrive(1, 5000, 0,3000, 80);
+
+  // base.pidIMUDrive(1, right, 5000, 180, 3000, 80);
+
+
 }
 
 
@@ -278,10 +352,13 @@ void autonomous() {
   BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
 //  base.pidIMUTurn(right, 90, 10000, 127);
 //  skillsAuto();
+
+
+  base.pidIMUDrive(1, 2000, 180,  5000, 80);
 //  base.pidDriveBumper(300, 1000, 70);
   //base.pidIMUTurn(left, 180, 10000, 127);
   //redUnprotected();
-  base.pidIMUDrive(1, right, 2000, 0, 10000, 127);
+  //base.pidIMUDrive(1, right, 2000, 0, 10000, 127);
 
   /*autoTrayUp = true;
   pros::delay(2000);

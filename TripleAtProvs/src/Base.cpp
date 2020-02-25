@@ -39,7 +39,7 @@ void Base::setRightPower(int power) { //Sets Right Motor Power
   BR = power;
 }
 
-void Base::pidIMUDrive(int dirD, int dirT, int targetD, int targetT, int timeout, int speedCap) {
+void Base::pidIMUDrive(int dirD, int targetD, int targetT, int timeout, int speedCap) {
   // target = imu.get_heading() + target;
   BR.tare_position();
   BL.tare_position();
@@ -60,51 +60,23 @@ void Base::pidIMUDrive(int dirD, int dirT, int targetD, int targetT, int timeout
 
   int s = 0;
   int origin_angle = 0;
-  int ref_angle = 0;
-  //  bool past_zero = false;
   int target_angle = targetT;
   origin_angle = imu.get_heading();
-
-  if(dirT == right && origin_angle > target_angle) { //Needs to pass origin
-    s = 1;
-    ref_angle = 360-origin_angle;
-    targetT = targetT + ref_angle;
-  } else if(dirT == right && origin_angle < target_angle) {
-    s = 0;
-  } else if(dirT == left && origin_angle > target_angle) { //Don't need to pass origin
-    s = 2;
-    targetT = origin_angle-targetT;
-  } else if(dirT == left && origin_angle < target_angle) {
-    s = 3;
-    targetT = origin_angle + (360-targetT);
-  }
-
-
 
   while((netTime < timeout)){
     netTime  = pros::millis() - startTime;
 
-    int current_ref_angle = 0;
-    if(s == 0) {
-      curAngle = imu.get_heading();
-    } else if(s == 1 && imu.get_heading() >= targetT && s1 == false) {
-      curAngle = imu.get_heading() - origin_angle;
-    } else if(s == 1 && imu.get_heading() < targetT) {
-      s1 = true;
-      curAngle = imu.get_heading() + 360-origin_angle;
-    } else if(s == 2) {
-      curAngle = origin_angle-imu.get_heading();
-    } else if(s == 3 && imu.get_heading() < target_angle && s1 == false) {
-      curAngle = origin_angle-imu.get_heading();
-    } else if(s == 3 && imu.get_heading() >= target_angle) {
-      s1 = true;
-      curAngle = origin_angle + (360-imu.get_heading());
+    if(targetT == 0 && imu.get_heading() > 180) {
+      errorT = targetT + (360-imu.get_heading());
+    } else {
+      errorT = targetT - imu.get_heading();
     }
 
-    int errorT = targetT - curAngle;
+
 
     encoderAverage = abs((abs(BR.get_position())+abs(BL.get_position())))/2;
-    int errorD = targetD - encoderAverage;
+
+    errorD = targetD - encoderAverage;
 
     errorDiffD = errorD - errorLastD;
     errorLastD = errorD;
@@ -118,8 +90,8 @@ void Base::pidIMUDrive(int dirD, int dirT, int targetD, int targetT, int timeout
     int pD = pDrive*errorD;
     int dD = dDrive*errorDiffD;
 
-    int motorPowerR = dirD*(pD+dD) + dirT*(pT+dT);
-    int motorPowerL = dirD*(pD+dD) - dirT*(pT+dT);
+    int motorPowerR = dirD*(pD+dD) - (pT+dT);
+    int motorPowerL = dirD*(pD+dD) + (pT+dT);
 
     if(motorPowerR>speedCap){
       motorPowerR = speedCap;
