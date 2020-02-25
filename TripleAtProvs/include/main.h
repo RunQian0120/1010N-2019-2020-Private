@@ -18,9 +18,9 @@ using namespace okapi;
 #define trayRange2 -2800
 #define trayFinal -3800 //-3950
 
-#define speed1 60
-#define speed2 50
-#define speed3 25
+#define speed1 127
+#define speed2 127
+#define speed3 40
 
 #define lowPreset -1700
 #define topPreset -2050

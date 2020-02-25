@@ -72,8 +72,8 @@ void redProtected() {
 }
 
 void redUnprotected() {
-
-  /*flipOut();
+/*
+ flipOut();
 
   lift.setIntakePower(127);
   pros::delay(600);
@@ -93,7 +93,9 @@ void redUnprotected() {
   base.pidTurn(right, 1000, 1000, 127);
   multiPlace = true;
   base.pidStrafe(right, 800, 800, 127);
-  driveBumper();*/
+  base.pidDriveBumper(3000, 2000, 100);
+  */
+//start jank TURN
 
   TrayM.tare_position();
   flipOut();
@@ -108,20 +110,26 @@ void redUnprotected() {
 
   base.pidTurn(left, 620, 700,127);
   base.pidDrive(-1, 2800, 1500, 127);
-  base.pidTurn(right, 600, 700, 127);
+  base.pidTurn(right, 650, 700, 127);
   base.lineUp(500, 127, 200);
   //base.lineUp(500, 127, 200);
 
-  base.pidDrive(1, 2400, 2500, 80);
+  base.pidDriveUltra(1, 1125, 1125, 2500, 80); //2750
   //base.pidStrafe(left, 800, 1000, 127);
   //base.pidDrive(1,500, 1000, 127);
   autoTrayUp = true;
 
-  base.pidIMUTurn(right, 155, 2000, 90);
+  base.pidIMUTurn(right, 162, 1800, 90);
   multiPlace = true;
-  base.pidDriveBumper(3000, 2000, 100);
-  base.pidDrive(1, 300, 1800, 70);
-  base.pidDrive(-1, 1000, 1000, 127);
+  base.pidDriveBumper(3000, 2000, 90);
+  lift.setIntakePower(-10);
+
+  base.pidDrive(1, 300, 1800, 30);
+  lift.setIntakePower(0);
+
+  base.pidDrive(-1, 1000, 1800, 100);
+
+  //base.pidDrive(-1, 1000, 1000, 127);
 
   /*
   base.lineUp(1800, 100, 180);
@@ -151,6 +159,22 @@ void redUnprotected() {
   driveBumper();
 
   //autoTopCube = true;*/
+
+}
+
+void redUnprotectedSix() {
+  //flipOut();
+  TrayM.tare_position();
+  lift.setIntakePower(127);
+  base.lineUp(600, 127, 100);
+  base.pidDriveUltra(1, 1070, 1070, 1200, 100);
+  base.pidStrafe(left, 700, 1500, 127);
+  base.pidDriveUltra(1, 1250, 1250,700, 127);
+  base.lineUp(1500, 127, 200);
+  base.pidIMUTurn(right, 90, 1200, 100);
+  base.pidStrafe(right, 1200, 1200, 127);
+  multiPlace = true;
+  base.pidDriveBumper(700, 1000, 127);
 
 }
 
@@ -253,13 +277,16 @@ void autonomous() {
   BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
   BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
 //  base.pidIMUTurn(right, 90, 10000, 127);
-  skillsAuto();
+//  skillsAuto();
 //  base.pidDriveBumper(300, 1000, 70);
-//  base.pidIMUTurn(left, 270, 1000, 127);
+  //base.pidIMUTurn(left, 180, 10000, 127);
+  //redUnprotected();
+  base.pidIMUDrive(1, right, 2000, 0, 10000, 127);
+
   /*autoTrayUp = true;
   pros::delay(2000);
   multiPlace = true;*/
-//redUnprotected();
+//  redUnprotected();
 //  moveLiftPos(-127, 1000);
 /*
   base.pidDrive(1, 250, 1000, 127);
