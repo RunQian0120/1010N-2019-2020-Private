@@ -119,9 +119,10 @@ void redUnprotected() {
   //base.pidDrive(1,500, 1000, 127);
   autoTrayUp = true;
 
-  base.pidIMUTurn(right, 162, 1800, 90);
+  //base.pidIMUTurn(right, 162, 1800, 90);
+  base.pidTurn(-1, 1850, 3000, 80);
   multiPlace = true;
-  base.pidDriveBumper(3000, 2000, 90);
+  base.pidDriveBumper(3000, 2000, 85);
   lift.setIntakePower(-10);
 
   base.pidDrive(1, 300, 1800, 30);
@@ -354,10 +355,10 @@ void autonomous() {
 //  skillsAuto();
 
 
-  base.pidIMUDrive(1, 2000, 180,  5000, 80);
+  //base.pidIMUDrive(1, 2000, 180,  5000, 80);
 //  base.pidDriveBumper(300, 1000, 70);
-  //base.pidIMUTurn(left, 180, 10000, 127);
-  //redUnprotected();
+  //base.pidTurn(1, 1275, 3000, 80);
+  redUnprotected();
   //base.pidIMUDrive(1, right, 2000, 0, 10000, 127);
 
   /*autoTrayUp = true;

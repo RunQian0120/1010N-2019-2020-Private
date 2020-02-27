@@ -405,7 +405,7 @@ void Base::pidTurn(int dir, int target, int timeout, int speedCap){
        FL.move(-motorPower);
        BL.move(-motorPower);
       }
-      FR.move(0);
+      FR.move(0); 
       FL.move(0);
       BR.move(0);
       BL.move(0);
