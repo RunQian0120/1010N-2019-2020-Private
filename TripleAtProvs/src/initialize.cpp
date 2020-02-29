@@ -38,7 +38,8 @@ bool resetAngler = false;
 bool resetLift = false;
 
 bool placeLogic = false;
-
+bool traydown = false;
+bool skillsPlace = false;
 pros::ADIDigitalIn anglerLimit(anglerLimitP); //NEW ROBOT
 pros::ADIDigitalIn liftLimit(liftLimitP);
 pros::ADIDigitalIn placeBump(bumperP);
@@ -52,6 +53,7 @@ bool liftDown = false;
 bool newLiftDown = false;
 bool lightS = false;
 bool autoTrayUp = false;
+bool autoTrayDown = false;
 
 void initialize() {
   imu.reset();

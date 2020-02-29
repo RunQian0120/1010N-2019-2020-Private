@@ -100,16 +100,20 @@ void Tray::autoTrayLogic(){
     anglerPID(15);
   } else if(placeS == 1 && TrayM.get_position() >= trayRange1) {
     anglerPID(speed1);
-  } else if(placeS == 1 && TrayM.get_position() < trayRange1 && TrayM.get_position() > trayRange2) {//1500
-    anglerPID(speed2);
-  } else if(placeS == 1 && TrayM.get_position() < trayRange2 && TrayM.get_position() >= trayFinal) {//2500
-    anglerPID(speed3);
 
-  } else {
+  } else if(placeS == 1 && TrayM.get_position() < trayRange1 && TrayM.get_position() > trayRange2) {//1500
+
+    anglerPID(speed2);
+  } else if(placeS == 1 && TrayM.get_position() < trayRange2 && TrayM.get_position() >= trayRange3) {//2500
+    anglerPID(speed4);
+
+  } else if(placeS == 1 && TrayM.get_position() < trayRange3 && TrayM.get_position() >= trayFinal) {
+    anglerPID(speed3);
+  }else {
     anglerPID(100);
   }
 
-  if(TrayM.get_position() <= trayFinal + 20) {
+  if(TrayM.get_position() <= trayFinal-5) {
     placeS = 0;
     anglerTarget = TrayM.get_position();
     placeLogic = false;

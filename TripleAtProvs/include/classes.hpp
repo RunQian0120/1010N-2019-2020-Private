@@ -16,6 +16,7 @@ public:
     void pidIMUTurn(int dir, int target, int timeout, int speedCap);
     void pidDriveBumper(int target, int timeout, int speedCap);
     void pidIMUDrive(int dirD, int targetD, int targetT, int timeout, int speedCap);
+    void pidTurnNearest(int target, int timeout, int speedCap);
 
     void lineUp (int timeout, int speedCap, int target);
     void pidDriveUltra (int dir, int targetR, int targetL, int timeout, int speedCap);

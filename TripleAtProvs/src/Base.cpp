@@ -5,7 +5,6 @@ float imuD = 0.5;
 //Constructor
 Base::Base() {
   direction = 1;
-
   //Autonomous variables
   pDrive = 0.18;
   dDrive = 0.5;
@@ -29,11 +28,13 @@ void Base::resetEncoder() { //Resets all Encoder values
   FR.tare_position();
   BL.tare_position();
   BR.tare_position();
-  }
-void Base::setLeftPower(int power) {//Sets Left Motor Power
+}
+
+void Base::setLeftPower(int power) { //Sets Left Motor Power
   FL = power;
   BL = power;
 }
+
 void Base::setRightPower(int power) { //Sets Right Motor Power
   FR = power;
   BR = power;
@@ -59,9 +60,8 @@ void Base::pidIMUDrive(int dirD, int targetD, int targetT, int timeout, int spee
   bool s1 = false;
 
   int s = 0;
-  int origin_angle = 0;
   int target_angle = targetT;
-  origin_angle = imu.get_heading();
+  int origin_angle = imu.get_heading();
 
   while((netTime < timeout)){
     netTime  = pros::millis() - startTime;
@@ -71,8 +71,6 @@ void Base::pidIMUDrive(int dirD, int targetD, int targetT, int timeout, int spee
     } else {
       errorT = targetT - imu.get_heading();
     }
-
-
 
     encoderAverage = abs((abs(BR.get_position())+abs(BL.get_position())))/2;
 
@@ -216,32 +214,12 @@ void Base:: pidDriveUltra(int dir, int targetR, int targetL, int timeout, int sp
 }
 
 void Base::pidIMUTurn(int dir, int target, int timeout, int speedCap) {
-// target = imu.get_heading() + target;
   int s = 0;
-  int origin_angle = 0;
   int ref_angle = 0;
-//  bool past_zero = false;
-  int target_angle = target;
-  origin_angle = imu.get_heading();
 
+  int origin_angle = imu.get_heading();
 
-  if(dir == right && origin_angle > target_angle) { //Needs to pass origin
-    s = 1;
-    ref_angle = 360-origin_angle;
-    target = target + ref_angle;
-  } else if(dir == right && origin_angle < target_angle) {
-    s = 0;
-  } else if(dir == left && origin_angle > target_angle) { //Don't need to pass origin
-    s = 2;
-  //  ref_angle = origin_angle -target;
-    target = origin_angle-target;
-  } else if(dir == left && origin_angle < target_angle) {
-    s = 3;
-  //  ref_angle = (360-target) + origin_angle;
-    target = origin_angle + (360-target);
-  }
-
-  int encoderAverage = 0;
+  int curAngle = 0;
   int startTime = pros::millis();
   int netTime = 0;
   int errorDiff = 0;
@@ -250,58 +228,81 @@ void Base::pidIMUTurn(int dir, int target, int timeout, int speedCap) {
 
   bool s1 = false;
 
+  //Pseudo Reset
+  if(dir == right) {
+    target -= origin_angle;
+
+    if(target < 0) {
+      target += 360;
+    }
+  } else {
+    target += 360-origin_angle;
+    if(target > 360) {
+      target -= 360;
+    }
+  }
+
   while((netTime < timeout)){
-//    master.print(0,0, "heading: %f", imu.get_heading());
     netTime  = pros::millis() - startTime;
 
-
-    int current_ref_angle = 0;
-
-    if(s == 0) {
-      encoderAverage = imu.get_heading();
-    } else if(s == 1 && imu.get_heading() >= target && s1 == false) {
-      encoderAverage = imu.get_heading() - origin_angle;
-    } else if(s == 1 && imu.get_heading() < target) {
-      s1 = true;
-      encoderAverage = imu.get_heading() + 360-origin_angle;
-    } else if(s == 2) {
-      encoderAverage = origin_angle-imu.get_heading();
-    } else if(s == 3 && imu.get_heading() < target_angle && s1 == false) {
-      encoderAverage = origin_angle-imu.get_heading();
-
-    } else if(s == 3 && imu.get_heading() >= target_angle) {
-      s1 = true;
-      encoderAverage = origin_angle + (360-imu.get_heading());
+    if(dir == right) {
+      curAngle = imu.get_heading() - origin_angle;
+      if(curAngle < 0) {
+        curAngle += 360;
+      }
+    } else {
+      curAngle = imu.get_heading() + (360 - origin_angle);
+      if(curAngle > 360) {
+        curAngle -= 360;
+      }
     }
-    int error = target - encoderAverage;
 
-  //  pros::lcd::print(0, "encoderAverage: %d", encoderAverage);
-  //  pros::lcd::print(1, "error: %d", error);
-
+    if(dir == right) {
+      error = target - curAngle;
+    } else if(dir == left) {
+      error = (360-target) - (360-curAngle);
+    }
+    /*
+    if(dir == right && origin_angle > target_angle && s1 == false) { //needs to go past 0
+      int curAngleNew = curAngle + (360-origin_angle);
+      if(curAngleNew > 360) {
+        curAngleNew -= 360;
+      }
+      error = target+(360-origin_angle) - curAngleNew;
+    } else if(dir == left && origin_angle < target_angle) {
+      int curAngleNew = curAngle - (360-origin_angle);
+      if(curAngleNew < 0) {
+        curAngleNew += 360;
+      }
+      error = target-(360-origin_angle) - curAngleNew;
+    } else {
+      error = target - curAngle;
+    }*/
 
     errorDiff = error - errorLast;
     errorLast = error;
 
-    int p = 2.5*error;
-    int d = 1.0*errorDiff;
+    int p = 3.2*error;
+    int d = 0*errorDiff;
 
-     int motorPower = (p+d);
-     if(motorPower>speedCap){
-       motorPower = speedCap;
-     }
-     if(motorPower<-speedCap){
-       motorPower =-speedCap;
-     }
+    int motorPower = (p+d);
 
-//     master.print(0,0, "power: %d", motorPower);
-     motorPower *= dir;
+    if(motorPower>speedCap){
+      motorPower = speedCap;
+    }
+    if(motorPower<-speedCap){
+      motorPower =-speedCap;
+    }
+    //motorPower *= dir;
+    motorPower *= dir;
 
-     FR.move(motorPower);
-     BR.move(motorPower);
-     FL.move(-motorPower);
-     BL.move(-motorPower);
-   }
-   master.print(0,0, "heading: %f", imu.get_heading());
+    FR.move(motorPower);
+    BR.move(motorPower);
+    FL.move(-motorPower);
+    BL.move(-motorPower);
+  }
+
+  master.print(0,0, "heading: %f", imu.get_heading());
 
   FR.move(0);
   BR.move(0);
@@ -383,32 +384,44 @@ void Base::pidTurn(int dir, int target, int timeout, int speedCap){
 
       int error = target - encoderAverage;
 
-       errorDiff = error - errorLast;
-       errorLast = error;
+      errorDiff = error - errorLast;
+      errorLast = error;
 
       int p = pTurn*error;
       int d = dTurn*errorDiff;
 
-       int motorPower = (p+d);
-       if(motorPower>speedCap){
-         motorPower = speedCap;
-       }
-       if(motorPower<-speedCap){
-         motorPower =-speedCap;
-       }
+      int motorPower = (p+d);
+      if(motorPower>speedCap){
+       motorPower = speedCap;
+      }
+      if(motorPower<-speedCap){
+       motorPower =-speedCap;
+      }
 
 
-       motorPower = motorPower* dir;
+      motorPower = motorPower* dir;
 
+<<<<<<< HEAD
+      FR.move(motorPower);
+      BR.move(motorPower);
+      FL.move(-motorPower);
+      BL.move(-motorPower);
+    }
+    FR.move(0);
+    FL.move(0);
+    BR.move(0);
+    BL.move(0);
+=======
        FR.move(motorPower);
        BR.move(motorPower);
        FL.move(-motorPower);
        BL.move(-motorPower);
       }
-      FR.move(0);
+      FR.move(0); 
       FL.move(0);
       BR.move(0);
       BL.move(0);
+>>>>>>> bbd9f9e898f39ad9d7e9cf30d4d7a5d40d00401c
 }
 
 //Autonomous PID Strafe
@@ -483,43 +496,102 @@ void Base::pidDriveBumper (int target, int timeout, int speedCap) {
     int p = pDrive*error;
     int d = dDrive*errorDiff;
 
-     int motorPower = (p+d);
-     if(motorPower>speedCap){
-       motorPower = speedCap;
-     }
-     if(motorPower<-speedCap){
-       motorPower =-speedCap;
-     }
-
-
-     int rightPower = motorPower;
-     int leftPower = motorPower;
-
-     FR.move(rightPower);
-     BR.move(rightPower);
-
-     FL.move(leftPower);
-     BL.move(leftPower);
-
-
+    int motorPower = (p+d);
+    if(motorPower>speedCap){
+     motorPower = speedCap;
     }
-    FR.move(0);
-    FL.move(0);
-    BR.move(0);
-    BL.move(0);
+    if(motorPower<-speedCap){
+     motorPower =-speedCap;
+    }
+
+
+    int rightPower = motorPower;
+    int leftPower = motorPower;
+
+    FR.move(rightPower);
+    BR.move(rightPower);
+
+    FL.move(leftPower);
+    BL.move(leftPower);
+
+
+  }
+  FR.move(0);
+  FL.move(0);
+  BR.move(0);
+  BL.move(0);
+}
+
+void Base::pidTurnNearest(int target, int timeout, int speedCap) {
+  int s = 0;
+  int ref_angle = 0;
+
+  int origin_angle = imu.get_heading();
+
+  int curAngle = 0;
+  int startTime = pros::millis();
+  int netTime = 0;
+  int errorDiff = 0;
+  int errorLast = 0;
+  int error = target;
+
+  bool s1 = false;
+
+  //Pseudo Reset
+
+  while((netTime < timeout)){
+    netTime  = pros::millis() - startTime;
+
+    int cur_ref_angle = 0;
+    curAngle = imu.get_heading();
+
+    if(target == 0 && imu.get_heading() > 180) {
+      error = target + 360-curAngle;
+    } else {
+      error = target- curAngle;
+    }
+
+    errorDiff = error - errorLast;
+    errorLast = error;
+
+    int p = 2.6*error;
+    int d = 2.7*errorDiff;
+
+    int motorPower = (p+d);
+
+    if(motorPower>speedCap){
+      motorPower = speedCap;
+    }
+    if(motorPower<-speedCap){
+      motorPower =-speedCap;
+    }
+    //motorPower *= dir;
+
+    FR.move(-motorPower);
+    BR.move(-motorPower);
+    FL.move(motorPower);
+    BL.move(motorPower);
+  }
+
+  master.print(0,0, "heading: %f", imu.get_heading());
+
+  FR.move(0);
+  BR.move(0);
+  FL.move(0);
+  BL.move(0);
 
 }
 
 //EXPO drive function for better control
 int expDrive (int joyVal, float driveExp, int joyDead, int motorMin) {
-    int joySign;
-    int joyMax = 127 - joyDead;
-    int joyLive = abs(joyVal) - joyDead;
-    if (joyVal > 0) {joySign = 1;}
-    else if (joyVal < 0) {joySign = -1;}
-    else {joySign = 0;}
-    int power = joySign * (motorMin + ((100 - motorMin) * pow(joyLive, driveExp) / pow(joyMax, driveExp)));
-    return power;
+  int joySign;
+  int joyMax = 127 - joyDead;
+  int joyLive = abs(joyVal) - joyDead;
+  if (joyVal > 0) {joySign = 1;}
+  else if (joyVal < 0) {joySign = -1;}
+  else {joySign = 0;}
+  int power = joySign * (motorMin + ((100 - motorMin) * pow(joyLive, driveExp) / pow(joyMax, driveExp)));
+  return power;
 }
 
 
@@ -531,18 +603,16 @@ void Base::drive() {
   const float cDriveExp = 1.4;
 
   //Expo drive
-//  int Y1 = expDrive(master.get_analog(E_CONTROLLER_ANALOG_LEFT_Y), cDriveExp, cJoyDead, cMotorMin);
-//  int X1 = expDrive(-master.get_analog(E_CONTROLLER_ANALOG_RIGHT_X), cDriveExp, cJoyDead, cMotorMin);
-//  int Z1 = expDrive(-master.get_analog(E_CONTROLLER_ANALOG_LEFT_X), cDriveExp, cJoyDead, cMotorMin);
-    int Y1 = master.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
-    int X1 = -master.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
-    int Z1 = -master.get_analog(E_CONTROLLER_ANALOG_LEFT_X);
+  //int Y1 = expDrive(master.get_analog(E_CONTROLLER_ANALOG_LEFT_Y), cDriveExp, cJoyDead, cMotorMin);
+  //int X1 = expDrive(-master.get_analog(E_CONTROLLER_ANALOG_RIGHT_X), cDriveExp, cJoyDead, cMotorMin);
+  //int Z1 = expDrive(-master.get_analog(E_CONTROLLER_ANALOG_LEFT_X), cDriveExp, cJoyDead, cMotorMin);
+  int Y1 = master.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
+  int X1 = -master.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+  int Z1 = -master.get_analog(E_CONTROLLER_ANALOG_LEFT_X);
 
 
   FR = Y1 + X1 + Z1;
   BR = Y1 + X1 - Z1;
   FL = Y1 - X1 - Z1;
   BL = Y1 - X1 + Z1;
-
-
 }

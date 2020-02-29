@@ -14,17 +14,21 @@ using namespace pros;
 
 using namespace okapi;
 
-#define trayRange1 -2000
-#define trayRange2 -2800
+#define trayRange1 -1800 //1800
+#define trayRange2 -2300 //2300
+#define trayRange3 -2950
 #define trayFinal -3800 //-3950
 
-#define speed1 127
-#define speed2 127
-#define speed3 40
+#define speed1 127 //127
+#define speed2 100 //100
+#define speed4 55
+#define speed3 25
+
 
 #define lowPreset -1700
 #define topPreset -2050
 
+extern bool traydown;
 extern bool multiArmUp;
 extern bool multiArmDown;
 extern bool multiPlace;
@@ -33,6 +37,7 @@ extern bool dunk;
 
 extern bool autoTopCube;
 extern bool autoTrayUp;
+extern bool autoTrayDown;
 
 extern bool resetLift;
 extern bool resetAngler;
@@ -47,7 +52,7 @@ extern bool newLiftDown;
 extern bool lowTower;
 extern bool highTower;
 
-
+extern bool skillsPlace;
 extern pros::Motor BR;
 extern pros::Motor BL;
 extern pros::Motor FR;
