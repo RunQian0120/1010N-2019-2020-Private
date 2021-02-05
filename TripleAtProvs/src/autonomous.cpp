@@ -437,6 +437,9 @@ void autonomous() {
 //  base.pidDriveBumper(300, 1000, 70);
   //base.pidTurn(1, 1275, 3000, 80);
   redUnprotected();
+<<<<<<< HEAD
+>>>>>>> bbd9f9e898f39ad9d7e9cf30d4d7a5d40d00401c
+=======
 >>>>>>> bbd9f9e898f39ad9d7e9cf30d4d7a5d40d00401c
   //base.pidIMUDrive(1, right, 2000, 0, 10000, 127);
 
